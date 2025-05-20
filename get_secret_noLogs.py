@@ -22,6 +22,7 @@ def get_managed_identity_token(resource="https://vault.azure.net"):
         response.raise_for_status()
         return response.json()["access_token"]
     except Exception as e:
+        print(f"Error: Failed to get access token from Managed Identity: {e}", file=sys.stderr)
         sys.exit(1)
 
 def fetch_secret_from_azure(token, secret_name):
@@ -34,7 +35,8 @@ def fetch_secret_from_azure(token, secret_name):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         return response.json()["value"]
-    except Exception:
+    except Exception as e:
+        print(f"Error: Failed to retrieve secret '{secret_name}': {e}", file=sys.stderr)
         return None
 
 def retrieve_secrets():
@@ -56,7 +58,11 @@ def retrieve_secrets():
                     "error": "Unable to retrieve secret."
                 }
                 
-    except Exception:
+    except json.JSONDecodeError as e:
+        print(f"Error: Invalid JSON input: {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: Unexpected error while retrieving secrets: {e}", file=sys.stderr)
         sys.exit(1)
         
     sys.stdin.close()
