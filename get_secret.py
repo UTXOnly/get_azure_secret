@@ -5,7 +5,7 @@ import sys
 
 # Configuration
 vault_uri = "https://brian-hartford-key-vault.vault.azure.net"
-secret_name = "brian-hartford"
+secret_name = "brian-hartford-secret"
 api_version = "7.3"
 
 def get_managed_identity_token(resource="https://vault.azure.net"):
